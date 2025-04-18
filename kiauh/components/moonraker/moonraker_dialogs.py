@@ -1,5 +1,5 @@
 # ======================================================================= #
-#  Copyright (C) 2020 - 2024 Dominik Willner <th33xitus@gmail.com>        #
+#  Copyright (C) 2020 - 2025 Dominik Willner <th33xitus@gmail.com>        #
 #                                                                         #
 #  This file is part of KIAUH - Klipper Installation And Update Helper    #
 #  https://github.com/dw-0/kiauh                                          #
@@ -48,7 +48,7 @@ def print_moonraker_overview(
     for i, k in enumerate(instance_map):
         mr_name = instance_map.get(k)
         m = f"<-> {mr_name}" if mr_name != "" else ""
-        line = Color.apply(f"{f'{i+1})' if show_index else '●'} {k} {m}", Color.CYAN)
+        line = Color.apply(f"{f'{i + 1})' if show_index else '●'} {k} {m}", Color.CYAN)
         dialog += f"║ {line:<63}║\n"
 
     warn_l1 = Color.apply("PLEASE NOTE:", Color.YELLOW)

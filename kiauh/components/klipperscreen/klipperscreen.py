@@ -1,5 +1,5 @@
 # ======================================================================= #
-#  Copyright (C) 2020 - 2024 Dominik Willner <th33xitus@gmail.com>        #
+#  Copyright (C) 2020 - 2025 Dominik Willner <th33xitus@gmail.com>        #
 #                                                                         #
 #  This file is part of KIAUH - Klipper Installation And Update Helper    #
 #  https://github.com/dw-0/kiauh                                          #
@@ -126,7 +126,7 @@ def update_klipperscreen() -> None:
         if settings.kiauh.backup_before_update:
             backup_klipperscreen_dir()
 
-        git_pull_wrapper(KLIPPERSCREEN_REPO, KLIPPERSCREEN_DIR)
+        git_pull_wrapper(KLIPPERSCREEN_DIR)
 
         install_python_requirements(KLIPPERSCREEN_ENV_DIR, KLIPPERSCREEN_REQ_FILE)
 

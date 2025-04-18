@@ -1,5 +1,5 @@
 # ======================================================================= #
-#  Copyright (C) 2020 - 2024 Dominik Willner <th33xitus@gmail.com>        #
+#  Copyright (C) 2020 - 2025 Dominik Willner <th33xitus@gmail.com>        #
 #                                                                         #
 #  This file is part of KIAUH - Klipper Installation And Update Helper    #
 #  https://github.com/dw-0/kiauh                                          #
@@ -27,7 +27,6 @@ from components.crowsnest import (
 )
 from components.klipper.klipper import Klipper
 from core.backup_manager.backup_manager import BackupManager
-from core.constants import CURRENT_USER
 from core.logger import DialogType, Logger
 from core.settings.kiauh_settings import KiauhSettings
 from core.types.component_status import ComponentStatus
@@ -73,7 +72,7 @@ def install_crowsnest() -> None:
     Logger.print_info("Installer will prompt you for sudo password!")
     try:
         run(
-            f"sudo make install BASE_USER={CURRENT_USER}",
+            "sudo make install",
             cwd=CROWSNEST_DIR,
             shell=True,
             check=True,
@@ -135,7 +134,7 @@ def update_crowsnest() -> None:
                     target=CROWSNEST_BACKUP_DIR,
                 )
 
-            git_pull_wrapper(CROWSNEST_REPO, CROWSNEST_DIR)
+            git_pull_wrapper(CROWSNEST_DIR)
 
             deps = parse_packages_from_file(CROWSNEST_INSTALL_SCRIPT)
             check_install_dependencies({*deps})

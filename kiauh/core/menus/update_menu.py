@@ -1,5 +1,5 @@
 # ======================================================================= #
-#  Copyright (C) 2020 - 2024 Dominik Willner <th33xitus@gmail.com>        #
+#  Copyright (C) 2020 - 2025 Dominik Willner <th33xitus@gmail.com>        #
 #                                                                         #
 #  This file is part of KIAUH - Klipper Installation And Update Helper    #
 #  https://github.com/dw-0/kiauh                                          #
@@ -12,16 +12,16 @@ import textwrap
 from typing import Callable, List, Type
 
 from components.crowsnest.crowsnest import get_crowsnest_status, update_crowsnest
-from components.klipper.klipper_setup import update_klipper
 from components.klipper.klipper_utils import (
     get_klipper_status,
 )
+from components.klipper.services.klipper_setup_service import KlipperSetupService
 from components.klipperscreen.klipperscreen import (
     get_klipperscreen_status,
     update_klipperscreen,
 )
-from components.moonraker.moonraker_setup import update_moonraker
-from components.moonraker.moonraker_utils import get_moonraker_status
+from components.moonraker.services.moonraker_setup_service import MoonrakerSetupService
+from components.moonraker.utils.utils import get_moonraker_status
 from components.webui_client.client_config.client_config_setup import (
     update_client_config,
 )
@@ -193,10 +193,12 @@ class UpdateMenu(BaseMenu):
         self.upgrade_system_packages()
 
     def update_klipper(self, **kwargs) -> None:
-        self._run_update_routine("klipper", update_klipper)
+        klsvc = KlipperSetupService()
+        self._run_update_routine("klipper", klsvc.update)
 
     def update_moonraker(self, **kwargs) -> None:
-        self._run_update_routine("moonraker", update_moonraker)
+        mrsvc = MoonrakerSetupService()
+        self._run_update_routine("moonraker", mrsvc.update)
 
     def update_mainsail(self, **kwargs) -> None:
         self._run_update_routine(

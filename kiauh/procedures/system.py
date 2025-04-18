@@ -1,5 +1,5 @@
 # ======================================================================= #
-#  Copyright (C) 2020 - 2024 Dominik Willner <th33xitus@gmail.com>        #
+#  Copyright (C) 2020 - 2025 Dominik Willner <th33xitus@gmail.com>        #
 #                                                                         #
 #  This file is part of KIAUH - Klipper Installation And Update Helper    #
 #  https://github.com/dw-0/kiauh                                          #
@@ -31,7 +31,7 @@ def change_system_hostname() -> None:
             "http://<hostname>.local",
             "\n\n",
             "Example: If you set your hostname to 'my-printer', you can access an "
-            "installed webinterface by tyoing 'http://my-printer.local' in the "
+            "installed webinterface by typing 'http://my-printer.local' in the "
             "browser.",
         ],
         custom_title="CHANGE SYSTEM HOSTNAME",

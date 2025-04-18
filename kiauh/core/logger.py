@@ -1,5 +1,5 @@
 # ======================================================================= #
-#  Copyright (C) 2020 - 2024 Dominik Willner <th33xitus@gmail.com>        #
+#  Copyright (C) 2020 - 2025 Dominik Willner <th33xitus@gmail.com>        #
 #                                                                         #
 #  This file is part of KIAUH - Klipper Installation And Update Helper    #
 #  https://github.com/dw-0/kiauh                                          #
@@ -25,6 +25,13 @@ class DialogType(Enum):
 
 
 LINE_WIDTH = 53
+
+
+BORDER_TOP: str = "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓"
+BORDER_BOTTOM: str = "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛"
+BORDER_TITLE: str = "┠───────────────────────────────────────────────────────┨"
+BORDER_LEFT: str = "┃"
+BORDER_RIGHT: str = "┃"
 
 
 class Logger:
@@ -81,24 +88,32 @@ class Logger:
         :param margin_top: The number of empty lines to print before the dialog.
         :param margin_bottom: The number of empty lines to print after the dialog.
         """
-        dialog_color = Logger._get_dialog_color(title, custom_color)
+        color = Logger._get_dialog_color(title, custom_color)
         dialog_title = Logger._get_dialog_title(title, custom_title)
-        dialog_title_formatted = Logger._format_dialog_title(dialog_title, dialog_color)
-        dialog_content = Logger.format_content(
-            content,
-            LINE_WIDTH,
-            dialog_color,
-            center_content,
-        )
-        top = Logger._format_top_border(dialog_color)
-        bottom = Logger._format_bottom_border(dialog_color)
 
-        print("\n" * margin_top)
-        print(
-            f"{top}{dialog_title_formatted}{dialog_content}{bottom}",
-            end="",
-        )
-        print("\n" * margin_bottom)
+        if margin_top > 0:
+            print("\n" * margin_top, end="")
+
+        print(Color.apply(BORDER_TOP, color))
+
+        if dialog_title:
+            print(Color.apply(f"┃ {dialog_title:^{LINE_WIDTH}} ┃", color))
+            print(Color.apply(BORDER_TITLE, color))
+
+        if content:
+            print(
+                Logger.format_content(
+                    content,
+                    LINE_WIDTH,
+                    color,
+                    center_content,
+                )
+            )
+
+        print(Color.apply(BORDER_BOTTOM, color))
+
+        if margin_bottom > 0:
+            print("\n" * margin_bottom, end="")
 
     @staticmethod
     def _get_dialog_title(
@@ -118,31 +133,6 @@ class Logger:
         color: Color = title.value[1] if title.value[1] else Color.WHITE
 
         return color
-
-    @staticmethod
-    def _format_top_border(color: Color) -> str:
-        _border = Color.apply(
-            "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n", color
-        )
-        return _border
-
-    @staticmethod
-    def _format_bottom_border(color: Color) -> str:
-        _border = Color.apply(
-            "\n┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛", color
-        )
-        return _border
-
-    @staticmethod
-    def _format_dialog_title(title: str | None, color: Color) -> str:
-        if title is None:
-            return ""
-
-        _title = Color.apply(f"┃ {title:^{LINE_WIDTH}} ┃\n", color)
-        _title += Color.apply(
-            "┠───────────────────────────────────────────────────────┨\n", color
-        )
-        return _title
 
     @staticmethod
     def format_content(

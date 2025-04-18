@@ -1,5 +1,5 @@
 # ======================================================================= #
-#  Copyright (C) 2020 - 2024 Dominik Willner <th33xitus@gmail.com>        #
+#  Copyright (C) 2020 - 2025 Dominik Willner <th33xitus@gmail.com>        #
 #                                                                         #
 #  This file is part of KIAUH - Klipper Installation And Update Helper    #
 #  https://github.com/dw-0/kiauh                                          #
@@ -116,10 +116,7 @@ class MoonrakerTelegramBot:
             "%TELEGRAM_BOT_DIR%",
             self.bot_dir.as_posix(),
         )
-        env_file_content = env_file_content.replace(
-            "%CFG%",
-            self.cfg_file.as_posix()
-        )
+        env_file_content = env_file_content.replace("%CFG%", self.cfg_file.as_posix())
         env_file_content = env_file_content.replace(
             "%LOG%",
             self.base.log_dir.joinpath(self.log_file_name).as_posix(),

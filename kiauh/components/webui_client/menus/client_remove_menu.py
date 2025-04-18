@@ -1,5 +1,5 @@
 # ======================================================================= #
-#  Copyright (C) 2020 - 2024 Dominik Willner <th33xitus@gmail.com>        #
+#  Copyright (C) 2020 - 2025 Dominik Willner <th33xitus@gmail.com>        #
 #                                                                         #
 #  This file is part of KIAUH - Klipper Installation And Update Helper    #
 #  https://github.com/dw-0/kiauh                                          #
@@ -57,7 +57,7 @@ class ClientRemoveMenu(BaseMenu):
         o1 = checked if self.remove_client else unchecked
         o2 = checked if self.remove_client_cfg else unchecked
         o3 = checked if self.backup_config_json else unchecked
-        sel_state = f"{'Select'if not self.select_state else 'Deselect'} everything"
+        sel_state = f"{'Select' if not self.select_state else 'Deselect'} everything"
         menu = textwrap.dedent(
             f"""
             ╟───────────────────────────────────────────────────────╢

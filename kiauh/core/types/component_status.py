@@ -1,5 +1,5 @@
 # ======================================================================= #
-#  Copyright (C) 2020 - 2024 Dominik Willner <th33xitus@gmail.com>        #
+#  Copyright (C) 2020 - 2025 Dominik Willner <th33xitus@gmail.com>        #
 #                                                                         #
 #  This file is part of KIAUH - Klipper Installation And Update Helper    #
 #  https://github.com/dw-0/kiauh                                          #
@@ -25,6 +25,7 @@ class ComponentStatus:
     status: StatusCode
     owner: str | None = None
     repo: str | None = None
+    repo_url: str | None = None
     branch: str = ""
     local: str | None = None
     remote: str | None = None

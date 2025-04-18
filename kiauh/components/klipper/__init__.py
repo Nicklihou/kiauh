@@ -1,5 +1,5 @@
 # ======================================================================= #
-#  Copyright (C) 2020 - 2024 Dominik Willner <th33xitus@gmail.com>        #
+#  Copyright (C) 2020 - 2025 Dominik Willner <th33xitus@gmail.com>        #
 #                                                                         #
 #  This file is part of KIAUH - Klipper Installation And Update Helper    #
 #  https://github.com/dw-0/kiauh                                          #
@@ -25,6 +25,7 @@ KLIPPER_SERVICE_NAME = "klipper.service"
 
 # directories
 KLIPPER_DIR = Path.home().joinpath("klipper")
+KLIPPER_KCONFIGS_DIR = Path.home().joinpath("klipper-kconfigs")
 KLIPPER_ENV_DIR = Path.home().joinpath("klippy-env")
 KLIPPER_BACKUP_DIR = BACKUP_ROOT_DIR.joinpath("klipper-backups")
 

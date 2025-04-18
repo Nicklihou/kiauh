@@ -1,5 +1,5 @@
 # ======================================================================= #
-#  Copyright (C) 2020 - 2024 Dominik Willner <th33xitus@gmail.com>        #
+#  Copyright (C) 2020 - 2025 Dominik Willner <th33xitus@gmail.com>        #
 #                                                                         #
 #  This file is part of KIAUH - Klipper Installation And Update Helper    #
 #  https://github.com/dw-0/kiauh                                          #
@@ -86,7 +86,12 @@ class BackupManager:
             date = get_current_date().get("date")
             time = get_current_date().get("time")
             backup_target = target.joinpath(f"{name.lower()}-{date}-{time}")
-            shutil.copytree(source, backup_target, ignore=self.ignore_folders_func, ignore_dangling_symlinks=True)
+            shutil.copytree(
+                source,
+                backup_target,
+                ignore=self.ignore_folders_func,
+                ignore_dangling_symlinks=True,
+            )
             Logger.print_ok("Backup successful!")
 
             return backup_target

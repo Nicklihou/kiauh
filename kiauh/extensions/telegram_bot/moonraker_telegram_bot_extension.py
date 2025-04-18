@@ -1,5 +1,5 @@
 # ======================================================================= #
-#  Copyright (C) 2020 - 2024 Dominik Willner <th33xitus@gmail.com>        #
+#  Copyright (C) 2020 - 2025 Dominik Willner <th33xitus@gmail.com>        #
 #                                                                         #
 #  This file is part of KIAUH - Klipper Installation And Update Helper    #
 #  https://github.com/dw-0/kiauh                                          #
@@ -135,7 +135,7 @@ class TelegramBotExtension(BaseExtension):
         instances = get_instances(MoonrakerTelegramBot)
         InstanceManager.stop_all(instances)
 
-        git_pull_wrapper(TG_BOT_REPO, TG_BOT_DIR)
+        git_pull_wrapper(TG_BOT_DIR)
         self._install_dependencies()
 
         InstanceManager.start_all(instances)

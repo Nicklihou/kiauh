@@ -1,5 +1,5 @@
 # ======================================================================= #
-#  Copyright (C) 2020 - 2024 Dominik Willner <th33xitus@gmail.com>        #
+#  Copyright (C) 2020 - 2025 Dominik Willner <th33xitus@gmail.com>        #
 #                                                                         #
 #  This file is part of KIAUH - Klipper Installation And Update Helper    #
 #  https://github.com/dw-0/kiauh                                          #
@@ -104,7 +104,7 @@ class MobilerakerExtension(BaseExtension):
             if settings.kiauh.backup_before_update:
                 self._backup_mobileraker_dir()
 
-            git_pull_wrapper(MOBILERAKER_REPO, MOBILERAKER_DIR)
+            git_pull_wrapper(MOBILERAKER_DIR)
 
             install_python_requirements(MOBILERAKER_ENV_DIR, MOBILERAKER_REQ_FILE)
 

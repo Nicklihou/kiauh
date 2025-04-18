@@ -1,5 +1,5 @@
 # ======================================================================= #
-#  Copyright (C) 2020 - 2024 Dominik Willner <th33xitus@gmail.com>        #
+#  Copyright (C) 2020 - 2025 Dominik Willner <th33xitus@gmail.com>        #
 #                                                                         #
 #  This file is part of KIAUH - Klipper Installation And Update Helper    #
 #  https://github.com/dw-0/kiauh                                          #
@@ -144,7 +144,7 @@ def install_client(
         custom_color=Color.GREEN,
         center_content=True,
         content=[
-            f"Open {client.display_name} now on: http://{get_ipv4_addr()}:{port}",
+            f"Open {client.display_name} now on: http://{get_ipv4_addr()}{'' if port == 80 else f':{port}'}",
         ],
     )
 

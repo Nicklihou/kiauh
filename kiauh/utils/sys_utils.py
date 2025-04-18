@@ -1,5 +1,5 @@
 # ======================================================================= #
-#  Copyright (C) 2020 - 2024 Dominik Willner <th33xitus@gmail.com>        #
+#  Copyright (C) 2020 - 2025 Dominik Willner <th33xitus@gmail.com>        #
 #                                                                         #
 #  This file is part of KIAUH - Klipper Installation And Update Helper    #
 #  https://github.com/dw-0/kiauh                                          #
@@ -19,7 +19,7 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 from subprocess import DEVNULL, PIPE, CalledProcessError, Popen, check_output, run
-from typing import List, Literal, Set
+from typing import List, Literal, Set, Tuple
 
 from core.constants import SYSTEMD
 from core.logger import Logger
@@ -95,6 +95,7 @@ def create_python_venv(
     target: Path,
     force: bool = False,
     allow_access_to_system_site_packages: bool = False,
+    use_python_binary: str | None = None
 ) -> bool:
     """
     Create a python 3 virtualenv at the provided target destination.
@@ -103,36 +104,46 @@ def create_python_venv(
     :param target: Path where to create the virtualenv at
     :param force: Force recreation of the virtualenv
     :param allow_access_to_system_site_packages: give the virtual environment access to the system site-packages dir
+    :param use_python_binary: allows to override default python binary
     :return: bool
     """
     Logger.print_status("Set up Python virtual environment ...")
-    cmd = ["virtualenv", "-p", "/usr/bin/python3", target.as_posix()]
+    # If binarry override is not set, we use default defined here
+    python_binary = use_python_binary if use_python_binary else "/usr/bin/python3"
+    cmd = ["virtualenv", "-p", python_binary, target.as_posix()]
     cmd.append(
         "--system-site-packages"
     ) if allow_access_to_system_site_packages else None
-    if not target.exists():
-        try:
-            run(cmd, check=True)
-            Logger.print_ok("Setup of virtualenv successful!")
-            return True
-        except CalledProcessError as e:
-            Logger.print_error(f"Error setting up virtualenv:\n{e}")
-            return False
-    else:
-        if not force and not get_confirm(
-            "Virtualenv already exists. Re-create?", default_choice=False
-        ):
-            Logger.print_info("Skipping re-creation of virtualenv ...")
-            return False
 
-        try:
-            shutil.rmtree(target)
-            create_python_venv(target)
-            return True
-        except OSError as e:
-            log = f"Error removing existing virtualenv: {e.strerror}"
-            Logger.print_error(log, False)
-            return False
+    n = 2
+    while(n > 0):
+        if not target.exists():
+            try:
+                run(cmd, check=True)
+                Logger.print_ok("Setup of virtualenv successful!")
+                return True
+            except CalledProcessError as e:
+                Logger.print_error(f"Error setting up virtualenv:\n{e}")
+                return False
+        else:
+            if n == 1:
+                # This case should never happen, 
+                # but the function should still behave correctly
+                Logger.print_error("Virtualenv still exists after deletion.")
+                return False                            
+            if not force and not get_confirm(
+                "Virtualenv already exists. Re-create?", default_choice=False
+            ):
+                Logger.print_info("Skipping re-creation of virtualenv ...")
+                return False
+
+            try:
+                shutil.rmtree(target)
+                n -= 1
+            except OSError as e:
+                log = f"Error removing existing virtualenv: {e.strerror}"
+                Logger.print_error(log, False)
+                return False
 
 
 def update_python_pip(target: Path) -> None:
@@ -183,6 +194,38 @@ def install_python_requirements(target: Path, requirements: Path) -> None:
             "-r",
             f"{requirements}",
         ]
+        result = run(command, stderr=PIPE, text=True)
+
+        if result.returncode != 0 or result.stderr:
+            Logger.print_error(f"{result.stderr}", False)
+            raise VenvCreationFailedException("Installing Python requirements failed!")
+
+        Logger.print_ok("Installing Python requirements successful!")
+
+    except Exception as e:
+        log = f"Error installing Python requirements: {e}"
+        Logger.print_error(log)
+        raise VenvCreationFailedException(log)
+
+
+def install_python_packages(target: Path, packages: List[str]) -> None:
+    """
+    Installs the python packages based on a provided packages list |
+    :param target: Path of the virtualenv
+    :param packages: str list of required packages
+    :return: None
+    """
+    try:
+        # always update pip before installing requirements
+        update_python_pip(target)
+
+        Logger.print_status("Installing Python requirements ...")
+        command = [
+            target.joinpath("bin/pip").as_posix(),
+            "install",
+        ]
+        for pkg in packages:
+            command.append(pkg)
         result = run(command, stderr=PIPE, text=True)
 
         if result.returncode != 0 or result.stderr:
@@ -327,11 +370,12 @@ def get_ipv4_addr() -> str:
     try:
         # doesn't even have to be reachable
         s.connect(("192.255.255.255", 1))
-        return str(s.getsockname()[0])
-    except Exception:
-        return "127.0.0.1"
-    finally:
+        ipv4: str = str(s.getsockname()[0])
         s.close()
+        return ipv4
+    except Exception:
+        s.close()
+        return "127.0.0.1"
 
 
 def download_file(url: str, target: Path, show_progress=True) -> None:
@@ -539,3 +583,62 @@ def get_service_file_path(instance_type: type, suffix: str) -> Path:
     file_path: Path = SYSTEMD.joinpath(f"{name}.service")
 
     return file_path
+
+
+def get_distro_info() -> Tuple[str, str]:
+    distro_info: str = check_output(["cat", "/etc/os-release"]).decode().strip()
+
+    if not distro_info:
+        raise ValueError("Error reading distro info!")
+
+    distro_id: str = ""
+    distro_id_like: str = ""
+    distro_version: str = ""
+
+    for line in distro_info.split("\n"):
+        if line.startswith("ID="):
+            distro_id = line.split("=")[1].strip('"').strip()
+        if line.startswith("ID_LIKE="):
+            distro_id_like = line.split("=")[1].strip('"').strip()
+        if line.startswith("VERSION_ID="):
+            distro_version = line.split("=")[1].strip('"').strip()
+
+    if distro_id == "raspbian":
+        distro_id = distro_id_like
+
+    if not distro_id:
+        raise ValueError("Error reading distro id!")
+    if not distro_version:
+        raise ValueError("Error reading distro version!")
+
+    return distro_id.lower(), distro_version
+
+
+def get_system_timezone() -> str:
+    timezone = "UTC"
+    try:
+        with open("/etc/timezone", "r") as f:
+            timezone = f.read().strip()
+    except FileNotFoundError:
+        # fallback to reading timezone from timedatectl
+        try:
+            result = run(
+                ["timedatectl", "show", "--property=Timezone"],
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            timezone = result.stdout.strip().split("=")[1]
+        except CalledProcessError:
+            # fallback if timedatectl fails, try reading from readlink
+            try:
+                result = run(
+                    ["readlink", "-f", "/etc/localtime"],
+                    capture_output=True,
+                    text=True,
+                    check=True,
+                )
+                timezone = result.stdout.strip().split("zoneinfo/")[1]
+            except (CalledProcessError, IndexError):
+                Logger.print_warn("Could not determine system timezone, using UTC")
+    return timezone
