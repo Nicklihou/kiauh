@@ -184,9 +184,6 @@ def install_python_requirements(target: Path, requirements: Path) -> None:
     :return: None
     """
     try:
-        # always update pip before installing requirements
-        update_python_pip(target)
-
         Logger.print_status("Installing Python requirements ...")
         command = [
             target.joinpath("bin/pip").as_posix(),
@@ -196,7 +193,7 @@ def install_python_requirements(target: Path, requirements: Path) -> None:
         ]
         result = run(command, stderr=PIPE, text=True)
 
-        if result.returncode != 0 or result.stderr:
+        if result.returncode != 0:
             Logger.print_error(f"{result.stderr}", False)
             raise VenvCreationFailedException("Installing Python requirements failed!")
 
@@ -216,9 +213,6 @@ def install_python_packages(target: Path, packages: List[str]) -> None:
     :return: None
     """
     try:
-        # always update pip before installing requirements
-        update_python_pip(target)
-
         Logger.print_status("Installing Python requirements ...")
         command = [
             target.joinpath("bin/pip").as_posix(),
@@ -228,7 +222,7 @@ def install_python_packages(target: Path, packages: List[str]) -> None:
             command.append(pkg)
         result = run(command, stderr=PIPE, text=True)
 
-        if result.returncode != 0 or result.stderr:
+        if result.returncode != 0:
             Logger.print_error(f"{result.stderr}", False)
             raise VenvCreationFailedException("Installing Python requirements failed!")
 
